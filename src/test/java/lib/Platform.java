@@ -15,7 +15,7 @@ public class Platform {
 
     private static final String PLATFORM_IOS = "ios";
     private static final String PLATFORM_ANDROID = "android";
-    private static final String PLATFORM_MOBILE_WEB = "MOBILE_WEB";
+    private static final String PLATFORM_MOBILE_WEB = "mobile_web";
     private static String APPIUM_URL = "http://127.0.0.1:4723/wd/hub";
 
     private static Platform instance;
@@ -49,7 +49,7 @@ public class Platform {
         } else if (isIOS()) {
             return new IOSDriver(URL, getIOSDesiredCapabilities());
         } else if (isMW()) {
-            return new ChromeDriver(this.getMWChromeOptions());
+            return new ChromeDriver(getMWChromeOptions());
         } else {
             throw new Exception("Cannot detect type of the platform. Platform value is: " + getPlatformVar());
         }

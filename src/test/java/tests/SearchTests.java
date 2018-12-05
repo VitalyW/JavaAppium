@@ -12,7 +12,7 @@ public class SearchTests extends CoreTestCase {
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
-        SearchPageObject.waitForSearchResult("Object-oriented programming language");
+        SearchPageObject.waitForSearchResult("bject-oriented programming language");
     }
 
     @Test
@@ -22,7 +22,7 @@ public class SearchTests extends CoreTestCase {
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine(search_line);
         SearchPageObject.waitForElementByTitleAndDescription(search_line, "Island of Indonesia");
-        SearchPageObject.waitForElementByTitleAndDescription(search_line, "Object-oriented programming language");
+        SearchPageObject.waitForElementByTitleAndDescription(search_line, "bject-oriented programming language");
         SearchPageObject.waitForElementByTitleAndDescription(search_line, "Programming language");
     }
 
