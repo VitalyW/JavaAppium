@@ -13,6 +13,9 @@ public class MyListsTests extends CoreTestCase {
 
     private static final String name_of_folder = "Learning programming";
     private static final String search_line = "Java";
+    private static final String
+            login = "VitJava",
+            password = "qwerty123";
 
     @Test
     public void testSaveFirstArticleToMyList() {
@@ -22,7 +25,7 @@ public class MyListsTests extends CoreTestCase {
 
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
-        SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
+        SearchPageObject.clickByArticleWithSubstring("bject-oriented programming language");
 
         ArticlePageObject.waitForTitleElement();
 
@@ -34,9 +37,26 @@ public class MyListsTests extends CoreTestCase {
             ArticlePageObject.addArticlesToMySaved();
         }
 
+        if (Platform.getInstance().isMW()) {
+            AuthorizationPageObject Auth = new AuthorizationPageObject(driver);
+            Auth.clickAuthButton();
+            Auth.enterLoginData(login, password);
+            Auth.submitForm();
+
+            ArticlePageObject.waitForTitleElement();
+
+            assertEquals(
+                    "We are not on the same page after login",
+                    article_title,
+                    ArticlePageObject.getArticleTitle());
+
+            ArticlePageObject.addArticlesToMySaved();
+        }
+
         ArticlePageObject.closeArticle();
 
         NavigationUI NavigationUI = NavigationUIFactory.get(driver);
+        NavigationUI.openNavigation();
         NavigationUI.clickMyLists();
 
         MyListsPageObject MyListsPageObject = MyListPageObjectFactory.get(driver);
@@ -45,6 +65,9 @@ public class MyListsTests extends CoreTestCase {
             MyListsPageObject.openFolderByName(name_of_folder);
         }
 
+        if (Platform.getInstance().isMW()) {
+            driver.navigate().refresh();
+        }
 
         MyListsPageObject.swipeByArticleToDelete(article_title);
     }
@@ -55,7 +78,7 @@ public class MyListsTests extends CoreTestCase {
         ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine(search_line);
-        SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
+        SearchPageObject.clickByArticleWithSubstring("bject-oriented programming language");
         ArticlePageObject.waitForTitleElement();
         String article_title = ArticlePageObject.getArticleTitle();
 

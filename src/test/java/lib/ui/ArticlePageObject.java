@@ -12,6 +12,7 @@ abstract public class ArticlePageObject extends MainPageObject {
             FOOTER_ELEMENT,
             OPTIONS_BUTTON,
             OPTIONS_ADD_TO_MY_LIST_BUTTON,
+            OPTIONS_REMOVE_FROM_MY_LIST_BUTTON,
             ADD_TO_MY_LIST_OVERLAY,
             MY_LIST_NAME_INPUT,
             MY_LIST_OK_BUTTON,
@@ -102,6 +103,9 @@ abstract public class ArticlePageObject extends MainPageObject {
     }
 
     public void addArticlesToMySaved() {
+        if (Platform.getInstance().isMW()) {
+            removeArticleFromMySavedIfItAdded();
+        }
         waitForElementAndClick(
                 OPTIONS_ADD_TO_MY_LIST_BUTTON,
                 "Cannot find option to add article to my reading list",
@@ -109,12 +113,30 @@ abstract public class ArticlePageObject extends MainPageObject {
         );
     }
 
-    public void closeArticle() {
-        this.waitForElementAndClick(
-                CLOSE_ARTICLE_BUTTON,
-                "Cannot find X button to close the article",
+    public void removeArticleFromMySavedIfItAdded() {
+        if (isElementPresent(OPTIONS_REMOVE_FROM_MY_LIST_BUTTON)) {
+            waitForElementAndClick(
+                    OPTIONS_REMOVE_FROM_MY_LIST_BUTTON,
+                    "Cannot click button to remove article from my saved",
+                    5
+            );
+        }
+        waitForElementPresent(
+                OPTIONS_ADD_TO_MY_LIST_BUTTON,
+                "Cannot find button to add an article to saved list after removing it from this list before",
                 5
         );
+    }
+
+    public void closeArticle() {
+        if ((Platform.getInstance().isIOS()) || (Platform.getInstance().isAndroid())) {
+            this.waitForElementAndClick(
+                    CLOSE_ARTICLE_BUTTON,
+                    "Cannot find X button to close the article",
+                    5
+            );
+        }
+        System.out.println("Method closeArticle() does nothing for platform " + Platform.getInstance().getPlatformVar());
     }
 
     public void addArticleToExistingList(String name_of_folder) {
