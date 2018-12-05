@@ -30,10 +30,11 @@ abstract public class ArticlePageObject extends MainPageObject {
         WebElement title_element = waitForTitleElement();
         if (Platform.getInstance().isAndroid()) {
             return title_element.getAttribute("text");
-        } else {
+        } else if (Platform.getInstance().isIOS()) {
             return title_element.getAttribute("name");
+        } else {
+            return title_element.getText();
         }
-
     }
 
     public int numberOfArticlesInMySaved() {
@@ -47,10 +48,16 @@ abstract public class ArticlePageObject extends MainPageObject {
                     "Cannot find footer of the article",
                     40
             );
-        } else {
+        } else if (Platform.getInstance().isIOS()) {
             this.swipeUpTillElementAppear(FOOTER_ELEMENT,
                     "Cannot find footer of the article",
                     40);
+        } else {
+            scrollWebPageTillElementNotVisible(
+                    FOOTER_ELEMENT,
+                    "Cannot find footer of the article",
+                    40
+            );
         }
 
     }

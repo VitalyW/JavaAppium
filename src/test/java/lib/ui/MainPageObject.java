@@ -6,6 +6,7 @@ import lib.Platform;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -14,6 +15,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import static org.junit.Assert.assertTrue;
 
 public class MainPageObject {
 
@@ -67,6 +70,30 @@ public class MainPageObject {
             action.tap(point_to_click_x, point_to_click_y).perform();
         } else {
             System.out.println("Method clickElementToTheRightUpperCorner() does nothing for platform: " + Platform.getInstance().getPlatformVar());
+        }
+    }
+
+    public void scrollWebPageUp() {
+        if (Platform.getInstance().isMW()) {
+            JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
+            javascriptExecutor.executeScript("window.scrollBy(0, 250)");
+        } else {
+            System.out.println("Method scrollWebPageUp() does nothing for platform: " + Platform.getInstance().getPlatformVar());
+
+        }
+    }
+
+    public void scrollWebPageTillElementNotVisible(String locator, String error_message, int max_swipes) {
+        int already_swiped = 0;
+
+        WebElement element = waitForElementPresent(locator, error_message);
+
+        while (!isElementLocatedOnTheScreen(locator)) {
+            scrollWebPageUp();
+            ++already_swiped;
+            if (already_swiped > max_swipes) {
+                assertTrue(error_message, element.isDisplayed());
+            }
         }
     }
 
@@ -142,9 +169,9 @@ public class MainPageObject {
 
     public void swipeUpTillElementAppear(String locator, String error_message, int max_swipes) {
         int already_swiped = 0;
-        while (! isElementLocatedOnTheScreen(locator)) {
+        while (!isElementLocatedOnTheScreen(locator)) {
             if (already_swiped > max_swipes) {
-                Assert.assertTrue(error_message, isElementLocatedOnTheScreen(locator));
+                assertTrue(error_message, isElementLocatedOnTheScreen(locator));
             }
             swipeUpQuick();
             ++already_swiped;
@@ -153,6 +180,11 @@ public class MainPageObject {
 
     public boolean isElementLocatedOnTheScreen(String locator) {
         int element_location_by_y =  waitForElementPresent(locator, "Cannot find element on the page", 7).getLocation().getY();
+        if (Platform.getInstance().isMW()) {
+            JavascriptExecutor javascriptExecutor = (JavascriptExecutor) driver;
+            Object js_result = javascriptExecutor.executeScript("return.pageYOffset");
+            element_location_by_y -= Integer.parseInt(js_result.toString());
+        }
         int screen_size_by_y = driver.manage().window().getSize().getHeight();
         return element_location_by_y < screen_size_by_y;
     }
