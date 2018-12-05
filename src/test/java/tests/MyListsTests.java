@@ -88,6 +88,22 @@ public class MyListsTests extends CoreTestCase {
             ArticlePageObject.addArticlesToMySaved();
         }
 
+        if (Platform.getInstance().isMW()) {
+            AuthorizationPageObject Auth = new AuthorizationPageObject(driver);
+            Auth.clickAuthButton();
+            Auth.enterLoginData(login, password);
+            Auth.submitForm();
+
+            ArticlePageObject.waitForTitleElement();
+
+            assertEquals(
+                    "We are not on the same page after login",
+                    article_title,
+                    ArticlePageObject.getArticleTitle());
+
+            ArticlePageObject.addArticlesToMySaved();
+        }
+
         ArticlePageObject.closeArticle();
 
         SearchPageObject.initSearchInput();
@@ -95,7 +111,10 @@ public class MyListsTests extends CoreTestCase {
             SearchPageObject.typeSearchLine(search_line);
         }
 
-        SearchPageObject.clickByArticleWithSubstring("Programming language");
+        SearchPageObject.typeSearchLine(search_line);
+        SearchPageObject.clickByArticleWithSubstring("island");
+        ArticlePageObject.waitForTitleElement();
+
         String title_before_adding_article_to_reading_list = ArticlePageObject.getArticleTitle();
         MyListsPageObject MyListsPageObject = MyListPageObjectFactory.get(driver);
 
@@ -107,6 +126,7 @@ public class MyListsTests extends CoreTestCase {
 
         ArticlePageObject.closeArticle();
         NavigationUI NavigationUI = NavigationUIFactory.get(driver);
+        NavigationUI.openNavigation();
         NavigationUI.clickMyLists();
 
         if (Platform.getInstance().isAndroid()) {
